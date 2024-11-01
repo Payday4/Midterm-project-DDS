@@ -1,0 +1,624 @@
+---
+title: "Midterm project Markdown"
+author: "Payden Bullis"
+date: "2024-10-27"
+output: html_document
+---
+Read in data
+```{r}
+
+Fritoquit <- read.csv("C:\\Users\\payde\\OneDrive\\Documents\\DATA science class intro\\DDS\\Midterm project\\CaseStudy1-data.csv", header = TRUE)
+```
+visualization and EDA
+```{r}
+##box plot of departments by job sat score (positive)
+ggplot(Fritoquit, aes(x = Attrition, y = JobSatisfaction)) +
+  geom_boxplot() +
+  facet_grid(~ Department) +
+  scale_y_continuous(name = "Job Satisfaction Score", limits = c(1, 4), breaks = seq(0, 4, by = 0.25))
+##box plot of gender by job sat score
+ggplot(Fritoquit, aes(x = Attrition, y = JobSatisfaction)) +
+  geom_boxplot() +
+  facet_grid(~ Gender) +
+  scale_y_continuous(name = "Job Satisfaction Score", limits = c(1, 4), breaks = seq(0, 4, by = 0.25))
+
+##box plot of departments by Job involment score (no obvious weight)
+ggplot(Fritoquit, aes(x = Attrition, y = JobInvolvement)) +
+  geom_boxplot() +
+  facet_grid(~ Department) +
+  scale_y_continuous(name = "Involement Score", limits = c(1, 4), breaks = seq(0, 4, by = 0.25))
+
+##box plot of departments by Enviroment Sat score (possible determinate of staying)
+ggplot(Fritoquit, aes(x = Attrition, y = EnvironmentSatisfaction)) +
+  geom_boxplot() +
+  facet_grid(~ Department) +
+  scale_y_continuous(name = "Environment Satisfaction", limits = c(1, 4), breaks = seq(0, 4, by = 0.25))
+
+##box plot of departments by Performance Rating score (yes to HR that received a 3 all yes received 3)
+ggplot(Fritoquit, aes(x = Attrition, y = PerformanceRating)) +
+  geom_boxplot() +
+  facet_grid(~ Department) +
+  scale_y_continuous(name = "Performance Rating", limits = c(1, 4), breaks = seq(0, 4, by = 0.25))
+
+##box plot of departments by Relationship Satisfaction score (R&D bad relationship score shows possible correlation)
+ggplot(Fritoquit, aes(x = Attrition, y = RelationshipSatisfaction)) +
+  geom_boxplot() +
+  facet_grid(~ Department) +
+  scale_y_continuous(name = "Relationship Satisfaction", limits = c(1, 4), breaks = seq(0, 4, by = 0.25))
+
+##bar chart of departments by Stock Option Level score (no obvious difference in trend pssible mean difference)
+ggplot(Fritoquit, aes(x = StockOptionLevel)) +
+  geom_bar() +
+  facet_grid(~ Department) + facet_grid(~ Attrition)
+  scale_x_continuous(name = "Stock Option Level")
+   
+##box plot of departments by Trainings score (No obvious trend)
+ggplot(Fritoquit, aes(x = Attrition, y = TrainingTimesLastYear)) +
+  geom_boxplot() +
+  facet_grid(~ Department) +
+  scale_y_continuous(name = "Trainings Prior Year", limits = c(1, 6), breaks = seq(0, 6, by = 0.5))
+
+##box plot of departments by Years with Company score (no is typically longer but that's obvious)
+ggplot(Fritoquit, aes(x = Attrition, y = YearsAtCompany)) +
+  geom_boxplot() +
+  facet_grid(~ Department) +
+  scale_y_continuous(name = "Tenure at Company", limits = c(0, 40), breaks = seq(0, 40, by = 2))
+
+##bar plot of travel by sat score 
+ggplot(Fritoquit, aes(x = BusinessTravel)) +
+  geom_bar() +
+  facet_grid(~ Department)
+##box plot of travel by sat score 
+ggplot(Fritoquit, aes(x = Attrition, y = JobSatisfaction)) +
+  geom_boxplot() +
+  facet_grid(~ BusinessTravel) +
+  scale_y_continuous(name = "Job Satisfaction", limits = c(1, 4), breaks = seq(0, 4, by = 0.25))
+
+##box plot of gender by age
+ggplot(Fritoquit, aes(x = Attrition, y = Age)) +
+  geom_boxplot() +
+  facet_grid(~ Gender) +
+  scale_y_continuous(name = "Age", limits = c(18, 61), breaks = seq(0, 61, by = 5))
+
+##Histogram of age and attrition
+ggplot(Fritoquit, aes(x = Age)) +
+  geom_histogram() +
+  facet_grid(~Attrition)
+
+##box plot of gender by job sat score
+ggplot(Fritoquit, aes(x = Attrition, y = Education)) +
+  geom_boxplot() +
+  facet_grid(~ Gender) +
+  scale_y_continuous(name = "Education level(anonymized)", limits = c(1, 5), breaks = seq(0, 5, by = 0.5))
+
+#subset of yes and no. 
+yes_quit <- subset(Fritoquit, Attrition  == "Yes")
+no_quit <- subset(Fritoquit, Attrition == "No")
+
+##Histogram of income of those that left
+ggplot(yes_quit, aes(x = MonthlyIncome)) + geom_histogram()
+
+##Histogram of income of those that remained at company
+ggplot(no_quit, aes(x = MonthlyIncome)) + geom_histogram()
+
+##Income scatter plot - Regress to find difference? 
+ggplot(Fritoquit, aes(x = MonthlyIncome, y = YearsAtCompany)) +
+  geom_point() +
+  facet_grid(~Attrition)
+
+##Income scatter plot by gender - Regress to find difference? 
+ggplot(yes_quit, aes(x = MonthlyIncome, y = YearsAtCompany)) +
+  geom_point() +
+  facet_grid(~Gender)
+
+##Income scatter plot by gender - Regress to find difference? 
+ggplot(no_quit, aes(x = MonthlyIncome, y = YearsAtCompany)) +
+  geom_point() +
+  facet_grid(~Gender)
+
+summary(Fritoquit)
+
+#pick the variables to test 
+#Monthly Income, Satisfaction score, age, 
+
+plot(YearsAtCompany ~ MonthlyIncome, data = Fritoquit)
+
+#level and quit
+ggplot(Fritoquit, aes(x = Attrition, y = JobLevel)) +
+  geom_boxplot() +
+  facet_grid(~ JobRole) +
+  scale_y_continuous(name = "job level", limits = c(1, 5), breaks = seq(0, 5, by = 0.25))
+
+#tenure level 
+ggplot(Fritoquit, aes(x = Attrition, y = YearsAtCompany)) +
+  geom_boxplot() +
+  facet_grid(~ JobLevel) +
+  scale_y_continuous(name = "tenure", limits = c(0, 41), breaks = seq(0, 41, by = 1))
+
+#promotions 
+ggplot(Fritoquit, aes(x = Attrition, y = YearsSinceLastPromotion)) +
+  geom_boxplot() +
+  facet_grid(~ JobLevel) +
+  scale_y_continuous(name = "Years Since Last Promo", limits = c(0, 20), breaks = seq(0, 20, by = 1))
+
+ggplot(Fritoquit, aes(x = Attrition)) +
+  geom_bar() +
+  facet_grid(~ Gender) +
+  scale_y_continuous(name = "Job Satisfaction Score", limits = c(0, 500), breaks = seq(0, 500, by = 50))
+
+table(Fritoquit$OverTime,Fritoquit$Attrition)
+OverTime_atr = table(Fritoquit$OverTime,Fritoquit$Attrition)
+OverTime_atr_dist = prop.table(OverTime_atr, 1) *100
+OverTime_atr_dist
+
+##box plot of departments by Years In Current Role score (positive relationship)
+ggplot(Fritoquit, aes(x = NumCompaniesWorked)) +
+  geom_histogram() +
+  facet_grid(~ Attrition)
+```
+viz for final presentation
+```{r}
+##Income scatter plot 
+ggplot(Fritoquit, aes(x = MonthlyIncome, y = YearsAtCompany)) + theme_economist() +
+  geom_jitter() + 
+  facet_grid(~Attrition)
+
+#bar chart of departments by Stock Option Level score
+ggplot(Fritoquit, aes(x = StockOptionLevel)) + theme_economist() +
+  geom_bar() +
+  facet_grid(~ Attrition)
+scale_x_continuous(name = "Stock Option Level")
+
+#box plot of gender by age
+ggplot(Fritoquit, aes(x = Attrition, y = Age)) + geom_boxplot() + theme_economist() + facet_grid(~ Gender) + 
+  scale_y_continuous(name = "Age", limits = c(18, 61), breaks = seq(0, 61, by = 5))
+
+#Income scatter plot by gender
+ggplot(Fritoquit, aes(x = MonthlyIncome, y = YearsAtCompany, color = Gender)) + 
+  theme_economist() + 
+  geom_jitter() + 
+  facet_grid(~Attrition)
+
+#job hopping
+ggplot(Fritoquit, aes(x = NumCompaniesWorked)) + 
+  theme_economist() + 
+  geom_histogram() + 
+  facet_grid(~Attrition) + scale_x_continuous(name = "Number of Prior Companies", breaks = seq(0,10, by = 1))
+
+#Dept
+ggplot(Fritoquit, aes(x = Department)) + 
+  theme_economist() + 
+  geom_bar() + 
+  facet_grid(~Attrition)
+
+#job type
+ggplot(yes_quit, aes(x = JobRole)) + 
+  theme_economist() + 
+  geom_bar() + 
+  facet_grid() + 
+  labs(title = "Quit", x = "Job Role") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, margin = margin(t = -50)), 
+        axis.title.x = element_text(margin = margin(t= 70))) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10))
+
+#job type
+ggplot(no_quit, aes(x = JobRole)) + 
+  theme_economist() + 
+  geom_bar() + 
+  facet_grid() + 
+  labs(title = "Did Not Quit", x = "Job Role") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, margin = margin(t = -50)), 
+        axis.title.x = element_text(margin = margin(t= 70))) +
+        scale_x_discrete(labels = function(x) str_wrap(x, width = 10))
+
+#Manager split 
+ggplot(FritoQuitFilter, aes(x = JobLevel)) + 
+  theme_economist() + 
+  geom_bar() + 
+  facet_grid(~Attrition) + labs(x = "Job Level") 
+
+ggplot(FritoQuitFilter, aes(x = JobRoleManagement)) + 
+  theme_economist() + 
+  geom_bar() + 
+  facet_grid(~Attrition) + labs(x = "Manager/Individual Contributor") 
+
+#survey data 
+ggplot(FritoQuitFilter, aes(x = OSAS)) + 
+  theme_economist() + 
+  geom_histogram() + 
+  facet_grid(~Attrition)
+
+#survey data 
+ggplot(FritoQuitFilter, aes(x = JobSatisfaction)) + 
+  theme_economist() + 
+  geom_bar() + 
+  facet_grid(~Attrition)
+```
+First attempt to fit a model I used "leave one out to test the usefulness of different variable on the model.
+```{r}
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 7, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 7, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 7, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 31, 32, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 31, 32, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 31, 32, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 33, 34, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 33, 34, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 33, 34, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 35, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 35, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 35, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 36)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35)],train$Attrition)
+table(predict(model,test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(2, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35)]),test$Attrition))
+
+#after going through each relevant variable 
+#NB model for testing. 
+model = naiveBayes(train[,c(4,6,9,15,17,18,19,21,26,27,29,31,33,34,35)],train$Attrition)
+table(predict(model,test[,c(4,6,9,15,17,18,19,21,26,27,29,31,33,34,35)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(4,6,9,15,17,18,19,21,26,27,29,31,33,34,35)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(13,16,20,22,30,34,36)],train$Attrition)
+table(predict(model,test[,c(13,16,20,22,30,34,36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(13,16,20,22,30,34,36)]),test$Attrition))
+
+#NB model for testing. 
+model = naiveBayes(train[,c(4,6,9,15,17,18,19,21,26,27,29,31,33,34,35,16,20,22,30,34,36)],train$Attrition)
+table(predict(model,test[,c(4,6,9,15,17,18,19,21,26,27,29,31,33,34,35,16,20,22,30,34,36)]),test$Attrition)
+confusionMatrix(table(predict(model, test[,c(4,6,9,15,17,18,19,21,26,27,29,31,33,34,35,16,20,22,30,34,36)]),test$Attrition))
+
+```
+More testing but with stats!
+```{r}
+Fritoquit
+#differences in mean monthly income for yes vs no for significance. 
+t.test(MonthlyIncome ~ Attrition, data = Fritoquit, var.equal = TRUE, alternative = "two.sided")
+
+qt(0.95, 868)
+
+#difference in mean income by positions 
+#split data
+Split_data <- split(Fritoquit, Fritoquit$JobRole)
+Split_data
+#print list of titles
+job_titles <- unique(Fritoquit$JobRole)
+job_titles
+```
+
+```{r}
+#make datasets for the jobs
+
+Manager <- Split_data[["Manager"]]
+Human_Resources <- Split_data[["Human Resources"]]
+Manufacturing_Director <- Split_data[["Manufacturing Director"]]
+Sales_Executive <- Split_data[["Sales Executive"]]
+Sales_Representative <- Split_data[["Sales Representative"]]
+Laboratory_Technician <- Split_data[["Laboratory Technician"]]
+Research_Scientist <- Split_data[["Research Scientist"]]
+Healthcare_Representative <- Split_data[["Healthcare Representative"]]
+Research_Director <- Split_data[["Research Director"]]
+
+hist(Manager$MonthlyIncome)
+hist(Human_Resources$MonthlyIncome)
+hist(Manufacturing_Director$MonthlyIncome)
+hist(Sales_Executive$MonthlyIncome)
+hist(Laboratory_Technician$MonthlyIncome)
+hist(Research_Scientist$MonthlyIncome)
+hist(Healthcare_Representative$MonthlyIncome)
+hist(Research_Director$MonthlyIncome)
+hist(Sales_Representative$MonthlyIncome)
+
+# Manager
+wilcox.test(MonthlyIncome ~ Attrition, data = Manager, alternative = "two.sided")
+# Human Resources
+wilcox.test(MonthlyIncome ~ Attrition, data = Human_Resources, alternative = "two.sided")
+# Manufacturing Director
+wilcox.test(MonthlyIncome ~ Attrition, data = Manufacturing_Director, alternative = "two.sided")
+# Sales Executive
+wilcox.test(MonthlyIncome ~ Attrition, data = Sales_Executive, alternative = "two.sided")
+# Laboratory Technician
+wilcox.test(MonthlyIncome ~ Attrition, data = Laboratory_Technician, alternative = "two.sided")
+# Research Scientist
+wilcox.test(MonthlyIncome ~ Attrition, data = Research_Scientist, alternative = "two.sided")
+# Healthcare Representative
+wilcox.test(MonthlyIncome ~ Attrition, data = Healthcare_Representative, alternative = "two.sided")
+# Research Director
+wilcox.test(MonthlyIncome ~ Attrition, data = Research_Director, alternative = "two.sided")
+# Sales Representative
+wilcox.test(MonthlyIncome ~ Attrition, data = Sales_Representative, alternative = "two.sided")
+```
+
+```{r}
+Fritoquit
+
+#differences in involement and attrition. 
+t.test(JobInvolvement ~ Attrition, data = Fritoquit, var.equal = TRUE, alternative = "two.sided")
+
+#differences in Sat and attrition. 
+t.test(JobSatisfaction ~ Attrition, data = Fritoquit, var.equal = TRUE, alternative = "two.sided")
+
+#model testing shows BusinessTravel, Department, EducationField, JobInvolvement, JobRole, JobSatisfaction, 
+#MaritalStatus, MonthlyRate, PerformanceRating, RelationshipSatisfaction, StockOptionLevel, TotalWorkingYears,
+#TrainingTimesLastYear, YearsAtCompany, YearsSinceLastPromotion, Overtime
+
+#Research Director, Manager, Manufacturing Director is highly predictive to Yes. 
+#checkinf for high level correlation among non manager groups.
+barchart(Manager$Attrition, main = "Manager") #about 10%
+barchart(Human_Resources$Attrition, main = "Human Resources") #19percent
+ggplot(Human_Resources, aes(x = Attrition)) +
+  geom_bar() + facet_grid(~JobLevel) #level 2 and 3 no quit
+barchart(Manufacturing_Director$Attrition, main = "Manufacturing") # 4
+barchart(Sales_Executive$Attrition, main = "Sales Exec")#15ish percent
+ggplot(Sales_Executive, aes(x = Attrition)) +
+  geom_bar() + facet_grid(~JobLevel) #low quit rate generally put level 4 manager category
+barchart(Laboratory_Technician$Attrition, main = "Lab Tech")#20ish percent
+ggplot(Laboratory_Technician, aes(x = Attrition)) +
+  geom_bar() + facet_grid(~JobLevel)
+barchart(Research_Scientist$Attrition, main = "Research Scientists") #20ish percent
+ggplot(Research_Scientist, aes(x = Attrition)) +
+  geom_bar() + facet_grid(~JobLevel)#no turn over at level 3
+barchart(Healthcare_Representative$Attrition, main = "Healthcare rep") # 12ish percent
+ggplot(Healthcare_Representative, aes(x = Attrition)) +
+  geom_bar() + facet_grid(~JobLevel) #level 1 has low turnover
+barchart(Research_Director$Attrition, main = "Research Director") # 1
+barchart(Sales_Representative$Attrition, main = "Sales Representative")#nearly 50/50
+ggplot(Sales_Representative, aes(x = Attrition)) +
+  geom_bar() + labs(title = "Sales Reps") + facet_grid(~JobLevel) #level 2 sales rep no quit
+```
+New variable creation based on data
+```{r}
+#mutate and group
+#grouping manager level people and separating out lower level 3 and higher go to one bucket for anything not manager or director title
+FritoQuitFilter$JobRoleManagement <- ifelse(Fritoquit$JobLevel >=4, "Manager", "Contributor")
+
+#large difference in monthlyrate and monthlyincome
+FritoQuitFilter$MonthDif <- FritoQuitFilter$MonthlyRate - FritoQuitFilter$MonthlyIncome
+
+#group tenure into long and short 0-2 short 3+ long
+FritoQuitFilter$Tenure <- ifelse(FritoQuitFilter$YearsAtCompany <= 2, "short", "long")
+
+#time since last promo
+FritoQuitFilter$Promo <- ifelse(FritoQuitFilter$YearsSinceLastPromotion <= 2, "short", "long")
+
+#time at company since promotion
+FritoQuitFilter$TenurePromo <- (FritoQuitFilter$YearsInCurrentRole*FritoQuitFilter$YearsAtCompany)
+
+#survey average
+FritoQuitFilter$OSAS <- (FritoQuitFilter$EnvironmentSatisfaction + FritoQuitFilter$JobInvolvement + FritoQuitFilter$JobSatisfaction + FritoQuitFilter$PerformanceRating + FritoQuitFilter$RelationshipSatisfaction + FritoQuitFilter$WorkLifeBalance)
+
+```
+Testing model fit
+```{r}
+set.seed(20)
+splitPerc = 0.75 #possibly change this?
+
+trainIndacies = sample(1:dim(FritoQuitFilter)[1],round(splitPerc* dim(FritoQuitFilter)[1]))
+trainFilter = FritoQuitFilter[trainIndacies,]
+testFilter = FritoQuitFilter[-trainIndacies,]
+
+#NB model for testing filtered data with level combined 
+model = naiveBayes(trainFilter[,c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole","YearsAtCompany",
+                                  "JobRoleManagement","Tenure","Promo","MonthDif","OSAS","JobSatisfaction","TotalWorkingYears","Education","JobLevel","MonthlyIncome")],trainFilter$Attrition)
+table(predict(model,testFilter[,c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole","YearsAtCompany",
+                                  "JobRoleManagement","Tenure","Promo","MonthDif","OSAS","JobSatisfaction","TotalWorkingYears","Education","JobLevel","MonthlyIncome")]),testFilter$Attrition)
+confusionMatrix(table(predict(model, testFilter[,c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole","YearsAtCompany",
+                                                   "JobRoleManagement","Tenure","Promo","MonthDif","OSAS","JobSatisfaction","TotalWorkingYears","Education","JobLevel","MonthlyIncome")]),testFilter$Attrition))
+
+```
+final model with 100 samples for averages
+```{r}
+accuracies <- numeric(100)
+sensitivities <- numeric(100)
+specificities <- numeric(100)
+
+# Loop over 100 different seeds
+for (i in 1:100) {
+  set.seed(i)
+  splitPerc = 0.75
+  
+  # Split the data
+  trainIndices <- sample(1:nrow(FritoQuitFilter), round(splitPerc * nrow(FritoQuitFilter)))
+  trainFilter <- FritoQuitFilter[trainIndices, ]
+  testFilter <- FritoQuitFilter[-trainIndices, ]
+
+  trainFilter$Attrition <- factor(trainFilter$Attrition)
+  testFilter$Attrition <- factor(testFilter$Attrition, levels = levels(trainFilter$Attrition))
+  
+  #Train the Naive Bayes model
+  model <- naiveBayes(trainFilter[, c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole","YearsAtCompany","YearsInCurrentRole",
+                                      "JobRoleManagement","Tenure","Promo","MonthDif","OSAS","JobSatisfaction","TotalWorkingYears","Education","JobLevel","MonthlyIncome")], trainFilter$Attrition)
+  
+  predictions <- predict(model, testFilter[, c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole","YearsAtCompany","YearsInCurrentRole",
+                                  "JobRoleManagement","Tenure","Promo","MonthDif","OSAS","JobSatisfaction","TotalWorkingYears","Education","JobLevel","MonthlyIncome")])
+  
+#Troubleshooting predictions are factors with the same levels as Attrition
+  predictions <- factor(predictions, levels = levels(trainFilter$Attrition))
+  
+#confusion matrix
+  cm <- confusionMatrix(predictions, testFilter$Attrition)
+  
+  # Store the metrics
+  accuracies[i] <- cm$overall['Accuracy']
+  sensitivities[i] <- cm$byClass['Sensitivity']
+  specificities[i] <- cm$byClass['Specificity']
+}
+
+# Calculate the average metrics
+avg_accuracy <- mean(accuracies)
+avg_sensitivity <- mean(sensitivities)
+avg_specificity <- mean(specificities)
+
+# Print the results
+cat("Average Accuracy:", avg_accuracy, "\n")
+cat("Average Sensitivity:", avg_sensitivity, "\n")
+cat("Average Specificity:", avg_specificity, "\n")
+```
+```{r}
+#rejected model
+
+accuracies <- numeric(100)
+sensitivities <- numeric(100)
+specificities <- numeric(100)
+
+# Loop over 100 different seeds
+for (i in 1:100) {
+  set.seed(i)
+  splitPerc = 0.75
+  
+  # Split the data
+  trainIndices <- sample(1:nrow(FritoQuitFilter), round(splitPerc * nrow(FritoQuitFilter)))
+  trainFilter <- FritoQuitFilter[trainIndices, ]
+  testFilter <- FritoQuitFilter[-trainIndices, ]
+
+  trainFilter$Attrition <- factor(trainFilter$Attrition)
+  testFilter$Attrition <- factor(testFilter$Attrition, levels = levels(trainFilter$Attrition))
+  
+  #Train the Naive Bayes model
+  model <- naiveBayes(trainFilter[, c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole",
+                                      "JobRoleManagement","Tenure","Promo","OSAS")], trainFilter$Attrition)
+  
+  predictions <- predict(model, testFilter[, c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole",
+                                               "JobRoleManagement","Tenure","Promo","OSAS")])
+  
+#Troubleshooting predictions are factors with the same levels as Attrition
+  predictions <- factor(predictions, levels = levels(trainFilter$Attrition))
+  
+#confusion matrix
+  cm <- confusionMatrix(predictions, testFilter$Attrition)
+  
+  # Store the metrics
+  accuracies[i] <- cm$overall['Accuracy']
+  sensitivities[i] <- cm$byClass['Sensitivity']
+  specificities[i] <- cm$byClass['Specificity']
+}
+
+# Calculate the average metrics
+avg_accuracy <- mean(accuracies)
+avg_sensitivity <- mean(sensitivities)
+avg_specificity <- mean(specificities)
+
+# Print the results
+cat("Average Accuracy:", avg_accuracy, "\n")
+cat("Average Sensitivity:", avg_sensitivity, "\n")
+cat("Average Specificity:", avg_specificity, "\n")
+```
+```{r}
+
+#compset
+accuracies <- numeric(100)
+sensitivities <- numeric(100)
+specificities <- numeric(100)
+  
+  # the Naive Bayes model
+  model <- naiveBayes(FritoQuitFilter[, c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole","YearsAtCompany",
+                                  "JobRoleManagement","Tenure","Promo","MonthDif","OSAS","JobSatisfaction","TotalWorkingYears","Education","JobLevel","MonthlyIncome")], FritoQuitFilter$Attrition)
+  
+  predictions <- predict(model, compset[, c("Age","BusinessTravel","Department","DistanceFromHome","MaritalStatus","OverTime","JobRole","YearsAtCompany",
+                                               "JobRoleManagement","Tenure","Promo","MonthDif","OSAS","JobSatisfaction","TotalWorkingYears","Education","JobLevel","MonthlyIncome")])
+
+print(predictions)
+#csv out
+write.csv(predictions, file = "compset_output.csv", row.names = FALSE)
+
+```
